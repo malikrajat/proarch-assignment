@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import jsonData from "./MOCK_DATA.json";
+import jsonData from "../../data/MOCK_DATA.json";
 
 import "./Table.scss";
+
 type TableData = {
 	id: number;
 	company_name: string;
@@ -16,7 +17,7 @@ const Table: React.FC = () => {
 	const [state, setState] = useState<TableData[]>([]);
 	const [search, setSearch] = useState("");
 	useEffect(() => {
-		setState(jsonData.data);
+		setState(jsonData);
 	}, []);
 
 	const filterTable = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +26,7 @@ const Table: React.FC = () => {
 
 	useEffect(() => {
 		if (search.length > 2) {
-			const filterData = jsonData.data.filter(
+			const filterData = jsonData.filter(
 				(res) =>
 					res.company_name
 						.toUpperCase()
@@ -42,7 +43,7 @@ const Table: React.FC = () => {
 			setState(filterData);
 		}
 		if (search.length < 1) {
-			setState(jsonData.data);
+			setState(jsonData);
 		}
 	}, [search]);
 	return (
