@@ -1,0 +1,42 @@
+{
+	"name": "interview-test",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@types/jest": "24.0.18",
+		"@types/node": "12.7.9",
+		"@types/react": "16.9.4",
+		"@types/react-dom": "16.9.1",
+		"node-sass": "^4.12.0",
+		"react": "^16.10.1",
+		"react-dom": "^16.10.1",
+		"react-scripts": "3.2.0",
+		"typescript": "3.9.7"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"description": "Welcome to the ProArch Coding Test, the aim of this test is to give an overview of your coding capabilities and your mindset to approaching problems. The base for this application was created with `Create React App` and modified to use both TypeScript and SCSS. There were also some slight modifications to get the basic parts in place.",
+	"main": "index.js",
+	"keywords": [],
+	"author": "",
+	"license": "ISC"
+}
