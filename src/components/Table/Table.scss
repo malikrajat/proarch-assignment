@@ -6,7 +6,15 @@
 		float: left;
 		margin: 0px 0px 19px 0px;
 		height: 42px;
-		border-radius: 7px;
+		border-radius: 9px;
+		padding-left: 9px;
+		outline: none;
+	}
+	input:focus {
+		border: 3px solid #299ee6;
+		box-shadow: 1px 1px #888888;
+		border-radius: 9px;
+		outline: none;
 	}
 }
 div.blueTable {
@@ -125,4 +133,14 @@ div.blueTable {
 }
 .divTableBody {
 	display: table-row-group;
+}
+.divTableRow {
+	display: table-row;
+	width: 100%;
+	text-align: center;
+	groupRow {
+		display: table-cell;
+		width: 100%;
+		text-align: center;
+	}
 }

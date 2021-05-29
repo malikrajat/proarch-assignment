@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import jsonData from "../../data/MOCK_DATA.json";
+import useDebounce from "./useDebounce";
 
 import "./Table.scss";
 
@@ -16,16 +17,18 @@ type TableData = {
 const Table: React.FC = () => {
 	const [state, setState] = useState<TableData[]>([]);
 	const [search, setSearch] = useState("");
+	const debouncedSearchTerm = useDebounce(search, 500);
+	const [isSearching, setIsSearching] = useState(false);
+
 	useEffect(() => {
+		document.title = "List of Companies With Details";
 		setState(jsonData);
 	}, []);
 
-	const filterTable = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setSearch(e.target.value);
-	};
-
 	useEffect(() => {
-		if (search.length > 2) {
+		if (search.length > 2 && debouncedSearchTerm) {
+			console.log(search);
+			setIsSearching(true);
 			const filterData = jsonData.filter(
 				(res) =>
 					res.company_name
@@ -40,23 +43,56 @@ const Table: React.FC = () => {
 						.toUpperCase()
 						.indexOf(search.toUpperCase()) !== -1
 			);
+			setIsSearching(false);
 			setState(filterData);
 		}
 		if (search.length < 1) {
 			setState(jsonData);
 		}
-	}, [search]);
+	}, [search, debouncedSearchTerm]);
+
+	const TableBody = () => {
+		return (
+			<>
+				{isSearching && <div>Searching ...</div>}
+				{state.map((res) => (
+					<div className="divTableRow" key={res?.id}>
+						<div className="divTableCell">{res?.id}</div>
+						<div className="divTableCell">{res?.company_name}</div>
+						<div className="divTableCell">{res?.currency}</div>
+						<div className="divTableCell">{res?.department}</div>
+						<div className="divTableCell">{res?.sales_total}</div>
+						<div className="divTableCell">{res?.city}</div>
+					</div>
+				))}
+				{state.length < 1 && (
+					<div className="divTableRow">
+						<div className="groupRow">No Record Found.</div>
+					</div>
+				)}
+			</>
+		);
+	};
+
 	return (
-		<div className="table-data">
-			<div className="input">
+		<div className="table-data" aria-live="polite" aria-atomic="true">
+			<div className="input" aria-label="Primary">
 				<input
+					id="searchInput"
 					type="text"
-					onChange={(e) => filterTable(e)}
+					onChange={(e) => setSearch(e.target.value)}
 					value={search}
+					name="search"
+					tabIndex={0}
+					maxLength={80}
+					autoFocus
+					aria-label="Filter Table Data"
+					aria-required="true"
 					placeholder="Search by Country Name, Department, Total Sales, City "
 				/>
 			</div>
-			<div className="table">
+
+			<div className="table" aria-label="Secondary">
 				<div className="divTable blueTable">
 					<div className="divTableHeading">
 						<div className="divTableRow">
@@ -69,24 +105,7 @@ const Table: React.FC = () => {
 						</div>
 					</div>
 					<div className="divTableBody">
-						{state.map((res) => (
-							<div className="divTableRow" key={res?.id}>
-								<div className="divTableCell">{res?.id}</div>
-								<div className="divTableCell">
-									{res?.company_name}
-								</div>
-								<div className="divTableCell">
-									{res?.currency}
-								</div>
-								<div className="divTableCell">
-									{res?.department}
-								</div>
-								<div className="divTableCell">
-									{res?.sales_total}
-								</div>
-								<div className="divTableCell">{res?.city}</div>
-							</div>
-						))}
+						<TableBody />
 					</div>
 				</div>
 			</div>
