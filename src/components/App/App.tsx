@@ -9,9 +9,9 @@ const App: React.FC = () => {
 	return (
 		<div className="App">
 			<Header />
-			{/* <main> */}
-			<Table />
-			{/* </main> */}
+			<main>
+				<Table />
+			</main>
 		</div>
 	);
 };

@@ -1,28 +1,19 @@
 import React, { useEffect, useState } from "react";
+
 import jsonData from "../../data/MOCK_DATA.json";
 import useDebounce from "./useDebounce";
+import { TableData } from "./RecordDataTypes";
+import Pagination from "./Pagination";
 
 import "./Table.scss";
-
-type TableData = {
-	id: number;
-	company_name: string;
-	currency_code: string;
-	currency: string;
-	department: string;
-	sales_total: string;
-	city: string;
-};
 
 const Table: React.FC = () => {
 	const [state, setState] = useState<TableData[]>([]);
 	const [search, setSearch] = useState("");
-	const debouncedSearchTerm = useDebounce(search, 100);
+	const debouncedSearchTerm = useDebounce(search, 500);
 	const [isSearching, setIsSearching] = useState(false);
 	const [recordPerPage] = useState(100);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [previousLastPage, setPreviousLastPage] = useState(true);
-	const [nextLastPage, setNextLastPage] = useState(false);
 
 	useEffect(() => {
 		document.title = "List of Companies With Details";
@@ -94,95 +85,6 @@ const Table: React.FC = () => {
 		);
 		setCurrentPage(pageNumber);
 		setState(currentRecordAsPerNumbered);
-		previousPage(pageNumber);
-		nextPage(pageNumber);
-	};
-
-	const PageNumbers = () => {
-		const totalRecords: number =
-			search.length < 1 ? jsonData.length : state.length;
-		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
-		const pageNumbersArray = new Array(totalPageNumber).fill(null);
-		return (
-			<>
-				{pageNumbersArray.map((count, index) => (
-					<li
-						className={
-							currentPage === index + 1
-								? "page-item active"
-								: "page-item"
-						}
-						key={index}
-					>
-						<a
-							className="page-link"
-							href="#!"
-							onClick={() => displayNextPage(index + 1)}
-						>
-							{index + 1}
-						</a>
-					</li>
-				))}
-			</>
-		);
-	};
-	const previousPage = (pageNumber: number) => {
-		if (pageNumber > 1) {
-			setPreviousLastPage(false);
-		}
-		if (pageNumber <= 1) {
-			setPreviousLastPage(true);
-		}
-	};
-
-	const nextPage = (pageNumber: number) => {
-		const totalRecords: number =
-			search.length < 1 ? jsonData.length : state.length;
-		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
-		if (pageNumber === totalPageNumber) {
-			setNextLastPage(true);
-		}
-		if (pageNumber !== totalPageNumber) {
-			setNextLastPage(false);
-		}
-	};
-
-	const Pagination = () => {
-		return (
-			<nav aria-label="Page navigation example">
-				<ul className="pagination floatRight">
-					<li
-						className={
-							previousLastPage
-								? "page-item disabled"
-								: " page-item"
-						}
-					>
-						<a
-							className="page-link"
-							href="#!"
-							onClick={() => displayNextPage(currentPage - 1)}
-						>
-							Previous
-						</a>
-					</li>
-					<PageNumbers />
-					<li
-						className={
-							nextLastPage ? "page-item disabled" : "page-item"
-						}
-					>
-						<a
-							className="page-link"
-							href="#!"
-							onClick={() => displayNextPage(currentPage + 1)}
-						>
-							Next
-						</a>
-					</li>
-				</ul>
-			</nav>
-		);
 	};
 
 	return (
@@ -220,7 +122,14 @@ const Table: React.FC = () => {
 					</tbody>
 				</table>
 			</div>
-			{search.length < 1 && <Pagination />}
+			{search.length < 1 && (
+				<Pagination
+					jsonData={jsonData}
+					currentPage={currentPage}
+					recordPerPage={recordPerPage}
+					displayNextPage={displayNextPage}
+				/>
+			)}
 		</div>
 	);
 };
