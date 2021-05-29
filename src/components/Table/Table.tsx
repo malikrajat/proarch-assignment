@@ -60,12 +60,18 @@ const Table: React.FC = () => {
 				{isSearching && <div>Searching ...</div>}
 				{state.map((res) => (
 					<tr key={res?.id}>
-						<td>{res?.id}</td>
-						<td>{res?.company_name}</td>
-						<td>{res?.currency}</td>
-						<td>{res?.department}</td>
-						<td>{res?.sales_total}</td>
-						<td>{res?.city}</td>
+						<td headers="Company's ids">{res?.id}</td>
+						<td headers="Company's Name">{res?.company_name}</td>
+						<td headers="Company's deals Currency">
+							{res?.currency}
+						</td>
+						<td headers="Company's Departments">
+							{res?.department}
+						</td>
+						<td headers="Company's Total Sales">
+							{res?.sales_total}
+						</td>
+						<td headers="Company's City">{res?.city}</td>
 					</tr>
 				))}
 				{state.length < 1 && (
@@ -201,12 +207,12 @@ const Table: React.FC = () => {
 				<table className="table table-hover" cellSpacing="0">
 					<thead>
 						<tr>
-							<th>Company ID</th>
-							<th>Company Name</th>
-							<th>Currency</th>
-							<th>Department</th>
-							<th>Total Sales</th>
-							<th>City</th>
+							<th scope="col">Company ID</th>
+							<th scope="col">Company Name</th>
+							<th scope="col">Currency</th>
+							<th scope="col">Department</th>
+							<th scope="col">Total Sales</th>
+							<th scope="col">City</th>
 						</tr>
 					</thead>
 					<tbody>
