@@ -50,7 +50,7 @@ const Table: React.FC = () => {
 			setState(filterData);
 		}
 		if (search.length < 1) {
-			// setState(jsonData);
+			displayNextPage(1);
 		}
 	}, [search, debouncedSearchTerm]);
 
@@ -78,10 +78,11 @@ const Table: React.FC = () => {
 	};
 
 	const displayNextPage = (pageNumber: number) => {
+		const recordList: TableData[] = search.length < 1 ? jsonData : state;
 		let statingRecordNumber: number =
 			pageNumber !== 1 ? pageNumber * recordPerPage - recordPerPage : 0;
 		let endingRecordNumber: number = pageNumber * recordPerPage;
-		let currentRecordAsPerNumbered: TableData[] = jsonData.slice(
+		let currentRecordAsPerNumbered: TableData[] = recordList.slice(
 			statingRecordNumber,
 			endingRecordNumber
 		);
@@ -92,7 +93,8 @@ const Table: React.FC = () => {
 	};
 
 	const PageNumbers = () => {
-		const totalRecords: number = jsonData.length;
+		const totalRecords: number =
+			search.length < 1 ? jsonData.length : state.length;
 		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
 		const pageNumbersArray = new Array(totalPageNumber).fill(null);
 		return (
@@ -118,7 +120,6 @@ const Table: React.FC = () => {
 			</>
 		);
 	};
-
 	const previousPage = (pageNumber: number) => {
 		if (pageNumber > 1) {
 			setPreviousLastPage(false);
@@ -129,7 +130,8 @@ const Table: React.FC = () => {
 	};
 
 	const nextPage = (pageNumber: number) => {
-		const totalRecords: number = jsonData.length;
+		const totalRecords: number =
+			search.length < 1 ? jsonData.length : state.length;
 		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
 		if (pageNumber === totalPageNumber) {
 			setNextLastPage(true);
@@ -212,7 +214,7 @@ const Table: React.FC = () => {
 					</tbody>
 				</table>
 			</div>
-			<Pagination />
+			{search.length < 1 && <Pagination />}
 		</div>
 	);
 };
