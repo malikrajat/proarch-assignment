@@ -17,19 +17,22 @@ type TableData = {
 const Table: React.FC = () => {
 	const [state, setState] = useState<TableData[]>([]);
 	const [search, setSearch] = useState("");
-	const debouncedSearchTerm = useDebounce(search, 500);
+	const debouncedSearchTerm = useDebounce(search, 100);
 	const [isSearching, setIsSearching] = useState(false);
+	const [recordPerPage] = useState(100);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [previousLastPage, setPreviousLastPage] = useState(true);
+	const [nextLastPage, setNextLastPage] = useState(false);
 
 	useEffect(() => {
 		document.title = "List of Companies With Details";
-		setState(jsonData);
+		displayNextPage(1);
 	}, []);
 
 	useEffect(() => {
 		if (search.length > 2 && debouncedSearchTerm) {
-			console.log(search);
 			setIsSearching(true);
-			const filterData = jsonData.filter(
+			const filterData: TableData[] = jsonData.filter(
 				(res) =>
 					res.company_name
 						.toUpperCase()
@@ -47,7 +50,7 @@ const Table: React.FC = () => {
 			setState(filterData);
 		}
 		if (search.length < 1) {
-			setState(jsonData);
+			// setState(jsonData);
 		}
 	}, [search, debouncedSearchTerm]);
 
@@ -56,21 +59,121 @@ const Table: React.FC = () => {
 			<>
 				{isSearching && <div>Searching ...</div>}
 				{state.map((res) => (
-					<div className="divTableRow" key={res?.id}>
-						<div className="divTableCell">{res?.id}</div>
-						<div className="divTableCell">{res?.company_name}</div>
-						<div className="divTableCell">{res?.currency}</div>
-						<div className="divTableCell">{res?.department}</div>
-						<div className="divTableCell">{res?.sales_total}</div>
-						<div className="divTableCell">{res?.city}</div>
-					</div>
+					<tr key={res?.id}>
+						<td>{res?.id}</td>
+						<td>{res?.company_name}</td>
+						<td>{res?.currency}</td>
+						<td>{res?.department}</td>
+						<td>{res?.sales_total}</td>
+						<td>{res?.city}</td>
+					</tr>
 				))}
 				{state.length < 1 && (
-					<div className="divTableRow">
-						<div className="groupRow">No Record Found.</div>
-					</div>
+					<tr>
+						<td colSpan={6}>No Record Found</td>
+					</tr>
 				)}
 			</>
+		);
+	};
+
+	const displayNextPage = (pageNumber: number) => {
+		let statingRecordNumber: number =
+			pageNumber !== 1 ? pageNumber * recordPerPage - recordPerPage : 0;
+		let endingRecordNumber: number = pageNumber * recordPerPage;
+		let currentRecordAsPerNumbered: TableData[] = jsonData.slice(
+			statingRecordNumber,
+			endingRecordNumber
+		);
+		setCurrentPage(pageNumber);
+		setState(currentRecordAsPerNumbered);
+		previousPage(pageNumber);
+		nextPage(pageNumber);
+	};
+
+	const PageNumbers = () => {
+		const totalRecords: number = jsonData.length;
+		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
+		const pageNumbersArray = new Array(totalPageNumber).fill(null);
+		return (
+			<>
+				{pageNumbersArray.map((count, index) => (
+					<li
+						className={
+							currentPage === index + 1
+								? "page-item active"
+								: "page-item"
+						}
+						key={index}
+					>
+						<a
+							className="page-link"
+							href="#!"
+							onClick={() => displayNextPage(index + 1)}
+						>
+							{index + 1}
+						</a>
+					</li>
+				))}
+			</>
+		);
+	};
+
+	const previousPage = (pageNumber: number) => {
+		if (pageNumber > 1) {
+			setPreviousLastPage(false);
+		}
+		if (pageNumber <= 1) {
+			setPreviousLastPage(true);
+		}
+	};
+
+	const nextPage = (pageNumber: number) => {
+		const totalRecords: number = jsonData.length;
+		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
+		if (pageNumber === totalPageNumber) {
+			setNextLastPage(true);
+		}
+		if (pageNumber !== totalPageNumber) {
+			setNextLastPage(false);
+		}
+	};
+
+	const Pagination = () => {
+		return (
+			<nav aria-label="Page navigation example">
+				<ul className="pagination floatRight">
+					<li
+						className={
+							previousLastPage
+								? "page-item disabled"
+								: " page-item"
+						}
+					>
+						<a
+							className="page-link"
+							href="#!"
+							onClick={() => displayNextPage(currentPage - 1)}
+						>
+							Previous
+						</a>
+					</li>
+					<PageNumbers />
+					<li
+						className={
+							nextLastPage ? "page-item disabled" : "page-item"
+						}
+					>
+						<a
+							className="page-link"
+							href="#!"
+							onClick={() => displayNextPage(currentPage + 1)}
+						>
+							Next
+						</a>
+					</li>
+				</ul>
+			</nav>
 		);
 	};
 
@@ -93,22 +196,23 @@ const Table: React.FC = () => {
 			</div>
 
 			<div className="table" aria-label="Secondary">
-				<div className="divTable blueTable">
-					<div className="divTableHeading">
-						<div className="divTableRow">
-							<div className="divTableHead">S.No</div>
-							<div className="divTableHead">Country Name</div>
-							<div className="divTableHead">Currency</div>
-							<div className="divTableHead">Department</div>
-							<div className="divTableHead">Sales Total</div>
-							<div className="divTableHead">City</div>
-						</div>
-					</div>
-					<div className="divTableBody">
+				<table className="table table-hover" cellSpacing="0">
+					<thead>
+						<tr>
+							<th>Company ID</th>
+							<th>Company Name</th>
+							<th>Currency</th>
+							<th>Department</th>
+							<th>Total Sales</th>
+							<th>City</th>
+						</tr>
+					</thead>
+					<tbody>
 						<TableBody />
-					</div>
-				</div>
+					</tbody>
+				</table>
 			</div>
+			<Pagination />
 		</div>
 	);
 };
