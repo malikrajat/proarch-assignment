@@ -51,7 +51,9 @@ const Pagination: React.FC<PaginationPropType> = ({
 	};
 
 	const PageNumbers = () => {
-		const totalRecords: number = jsonData.length;
+		const totalRecords: number = Array.isArray(jsonData)
+			? jsonData.length
+			: 0;
 		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
 		const pageNumbersArray = new Array(totalPageNumber).fill(null);
 		return (
@@ -87,7 +89,9 @@ const Pagination: React.FC<PaginationPropType> = ({
 	};
 
 	const nextPage = (pageNumber: number) => {
-		const totalRecords: number = jsonData.length;
+		const totalRecords: number = Array.isArray(jsonData)
+			? jsonData.length
+			: 0;
 
 		const totalPageNumber: number = Math.ceil(totalRecords / recordPerPage);
 		if (pageNumber === totalPageNumber) {
@@ -107,18 +111,17 @@ const Pagination: React.FC<PaginationPropType> = ({
 	);
 };
 Pagination.propTypes = {
-	// jsonData: PropTypes.arrayOf(
-	// 	PropTypes.shape({
-	// 		id: PropTypes.number.isRequired,
-	// 		company_name: PropTypes.string.isRequired,
-	// 		currency_code: PropTypes.string.isRequired,
-	// 		currency: PropTypes.string.isRequired,
-	// 		department: PropTypes.string.isRequired,
-	// 		sales_total: PropTypes.string.isRequired,
-	// 		city: PropTypes.string.isRequired,
-	// 	})
-	// ).isRequired,
-	jsonData: PropTypes.any.isRequired,
+	jsonData: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.number.isRequired,
+			company_name: PropTypes.string.isRequired,
+			currency_code: PropTypes.string.isRequired,
+			currency: PropTypes.string.isRequired,
+			department: PropTypes.string.isRequired,
+			sales_total: PropTypes.string.isRequired,
+			city: PropTypes.string.isRequired,
+		})
+	).isRequired,
 	currentPage: PropTypes.number.isRequired,
 	recordPerPage: PropTypes.number.isRequired,
 	displayNextPage: PropTypes.func.isRequired,

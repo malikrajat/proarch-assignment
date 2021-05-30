@@ -1,7 +1,7 @@
 import { TableData } from "./RecordDataTypes";
 
 export interface PaginationPropType {
-	jsonData: TableData[];
+	jsonData: TableData[] | {};
 	currentPage: number;
 	recordPerPage: number;
 	displayNextPage: (pageNumber: number) => void;
